@@ -53,21 +53,261 @@ struct text_config
 struct print_config
 {
     struct text_config selected_text;
-    struct text_config other_test;
+    struct text_config other_text;
     struct text_config header;
 };
+
+int off_text_color(print_config * const obj, TextType type)
+{
+    if (!obj) {
+        return -1;
+    }
+    switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.text.color_type = ColorTypeNone;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.text.color_type = ColorTypeNone;
+        break;
+    default:
+        return -1;
+    }
+}
+
+int off_background_color(print_config * const obj, TextType type)
+{
+    if (!obj) {
+        return -1;
+    }
+    switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.background.color_type = ColorTypeNone;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.background.color_type = ColorTypeNone;
+        break;
+    default:
+        return -1;
+    }
+}
+
+int set_text_color(print_config * const obj, TextType type, enum BasicColor color)
+{
+    if (!obj) {
+        return -1;
+    }
+    if (color < 0 || color > 7) {
+        return -1;
+    }
+
+    switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.text.color_type  = ColorTypeBasic;
+        obj->selected_text.text.basic_color = color;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.text.color_type  = ColorTypeBasic;
+        obj->other_text.text.basic_color = color;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
+int set_text_color_rgb(print_config * const obj, TextType type, struct RGB color)
+{
+    if (!obj) {
+        return -1;
+    }
+
+    switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.text.color_type  = ColorTypeRGB;
+        obj->selected_text.text.rgb_color = color;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.text.color_type  = ColorTypeRGB;
+        obj->other_text.text.rgb_color = color;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
+
+
+int set_background_color(print_config * const obj, TextType type, enum BasicColor color)
+{
+    if (!obj) {
+        return -1;
+    }
+    if (color < 0 || color > 7) {
+        return -1;
+    }
+
+    switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.background.color_type  = ColorTypeBasic;
+        obj->selected_text.background.basic_color = color;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.background.color_type  = ColorTypeBasic;
+        obj->other_text.background.basic_color = color;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
+
+int set_background_color_rgb(print_config * const obj, TextType type, struct RGB color)
+{
+    if (!obj) {
+        return -1;
+    }
+
+    switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.background.color_type = ColorTypeRGB;
+        obj->selected_text.background.rgb_color  = color;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.background.color_type = ColorTypeRGB;
+        obj->other_text.background.rgb_color  = color;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
+
+int set_text_bold(print_config * const obj, TextType type)
+{
+    if (!obj) {
+        return -1;
+    }
+        switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.used_attrs.is_bold = 1;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.used_attrs.is_bold = 1;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
+
+int off_text_bold(print_config * const obj, TextType type)
+{
+    if (!obj) {
+        return -1;
+    }
+        switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.used_attrs.is_bold = 0;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.used_attrs.is_bold = 0;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
+int set_text_italic(print_config * const obj, TextType type)
+{
+    if (!obj) {
+        return -1;
+    }
+        switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.used_attrs.is_italic = 1;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.used_attrs.is_italic = 1;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
+int off_text_italic(print_config * const obj, TextType type)
+{
+    if (!obj) {
+        return -1;
+    }
+        switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.used_attrs.is_italic = 0;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.used_attrs.is_italic = 0;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
+int set_text_underline(print_config * const obj, TextType type)
+{
+    if (!obj) {
+        return -1;
+    }
+        switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.used_attrs.is_underline = 1;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.used_attrs.is_underline = 1;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
+int off_text_underline(print_config * const obj, TextType type)
+{
+    if (!obj) {
+        return -1;
+    }
+        switch (type)
+    {
+    case TEXT_TYPE_SELECTED:
+        obj->selected_text.used_attrs.is_underline = 0;
+        break;
+    case TEXT_TYPE_OTHER:
+        obj->other_text.used_attrs.is_underline = 0;
+        break;
+    default:
+        return -1;
+    }
+    return 0;
+}
 
 struct print_config* init_print_cfg()
 {
     struct print_config *cfg = malloc(sizeof(*cfg));
     memset(cfg, 0, sizeof(*cfg));
 
-    cfg->other_test.text.color_type  = ColorTypeBasic;
-    cfg->other_test.text.basic_color = WHITE;
+    cfg->other_text.text.color_type  = ColorTypeBasic;
+    cfg->other_text.text.basic_color = WHITE;
 
-    cfg->other_test.background.color_type  = ColorTypeNone;
+    cfg->other_text.background.color_type  = ColorTypeNone;
 
-    cfg->selected_text = cfg->other_test;
+    cfg->selected_text = cfg->other_text;
     cfg->selected_text.text.basic_color = RED;
     cfg->selected_text.used_attrs.is_underline = 1;
 
@@ -200,7 +440,7 @@ void print_line(char const * const text, unsigned line_coord, struct text_config
     reset_all_sgr_attr();
 }
 
-int get_choice(struct print_config const * const cfg, char header[], char *text[], unsigned lines)
+int get_choice(struct print_config const * const cfg, char *text[], unsigned lines)
 {
     if (!cfg)  { return -1; }
     if (!text) { return -1; }
@@ -213,17 +453,13 @@ int get_choice(struct print_config const * const cfg, char header[], char *text[
 
 
     unsigned start_point = 1;
-    if (header) {
-        start_point = 1; // new point under header text
-    }
-
     cursor_position(start_point + lines + 1, 1);
     errase_full_line();
     printf("↑ - Up / ↓ - Down / Enter or → - Select");
 
     print_line(text[0], start_point, cfg->selected_text);
     for (size_t i = 1; i < lines; ++i) {
-        print_line(text[i], start_point + i, cfg->other_test);
+        print_line(text[i], start_point + i, cfg->other_text);
     }
 
     int is_select    = 0;
@@ -262,7 +498,7 @@ int get_choice(struct print_config const * const cfg, char header[], char *text[
         }
 
         if (need_reprint) {
-            print_line(text[prev_line], start_point + prev_line, cfg->other_test);
+            print_line(text[prev_line], start_point + prev_line, cfg->other_text);
             print_line(text[cur_line], start_point + cur_line, cfg->selected_text);
 
             need_reprint = 0;
