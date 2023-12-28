@@ -17,8 +17,8 @@ const char result[] = "\x1b[C";
 enum ColorType
 {
     ColorTypeBasic,
-    ColorTypeRGB,
-    ColorTypeNone,
+    ColorTypeRGB  ,
+    ColorTypeNone ,
 };
 
 enum ChoiceResult
@@ -62,6 +62,7 @@ int off_text_color(print_config * const obj, TextType type)
     if (!obj) {
         return -1;
     }
+
     switch (type)
     {
     case TEXT_TYPE_SELECTED:
@@ -80,6 +81,7 @@ int off_background_color(print_config * const obj, TextType type)
     if (!obj) {
         return -1;
     }
+
     switch (type)
     {
     case TEXT_TYPE_SELECTED:
@@ -126,12 +128,12 @@ int set_text_color_rgb(print_config * const obj, TextType type, struct RGB color
     switch (type)
     {
     case TEXT_TYPE_SELECTED:
-        obj->selected_text.text.color_type  = ColorTypeRGB;
-        obj->selected_text.text.rgb_color = color;
+        obj->selected_text.text.color_type = ColorTypeRGB;
+        obj->selected_text.text.rgb_color  = color;
         break;
     case TEXT_TYPE_OTHER:
-        obj->other_text.text.color_type  = ColorTypeRGB;
-        obj->other_text.text.rgb_color = color;
+        obj->other_text.text.color_type = ColorTypeRGB;
+        obj->other_text.text.rgb_color  = color;
         break;
     default:
         return -1;
@@ -192,7 +194,8 @@ int set_text_bold(print_config * const obj, TextType type)
     if (!obj) {
         return -1;
     }
-        switch (type)
+
+    switch (type)
     {
     case TEXT_TYPE_SELECTED:
         obj->selected_text.used_attrs.is_bold = 1;
@@ -211,7 +214,8 @@ int off_text_bold(print_config * const obj, TextType type)
     if (!obj) {
         return -1;
     }
-        switch (type)
+
+    switch (type)
     {
     case TEXT_TYPE_SELECTED:
         obj->selected_text.used_attrs.is_bold = 0;
@@ -229,7 +233,8 @@ int set_text_italic(print_config * const obj, TextType type)
     if (!obj) {
         return -1;
     }
-        switch (type)
+
+    switch (type)
     {
     case TEXT_TYPE_SELECTED:
         obj->selected_text.used_attrs.is_italic = 1;
@@ -247,7 +252,8 @@ int off_text_italic(print_config * const obj, TextType type)
     if (!obj) {
         return -1;
     }
-        switch (type)
+
+    switch (type)
     {
     case TEXT_TYPE_SELECTED:
         obj->selected_text.used_attrs.is_italic = 0;
@@ -265,7 +271,8 @@ int set_text_underline(print_config * const obj, TextType type)
     if (!obj) {
         return -1;
     }
-        switch (type)
+
+    switch (type)
     {
     case TEXT_TYPE_SELECTED:
         obj->selected_text.used_attrs.is_underline = 1;
@@ -278,6 +285,7 @@ int set_text_underline(print_config * const obj, TextType type)
     }
     return 0;
 }
+
 int off_text_underline(print_config * const obj, TextType type)
 {
     if (!obj) {
@@ -383,45 +391,65 @@ int get_choice_from_console()
     return BAD_RESULT;
 }
 
-void use_text_fmt(struct text_config fmt)
+void activate_text_color(struct color_cfg *text)
 {
-    if (fmt.used_attrs.is_bold)      { text_bold();      }
-    if (fmt.used_attrs.is_italic)    { text_italic();    }
-    if (fmt.used_attrs.is_underline) { text_underline(); }
+    if (!text) { return; }
 
-    switch (fmt.text.color_type)
+    switch (text->color_type)
     {
     case ColorTypeBasic:
     {
-        change_text_color(fmt.text.basic_color);
+        change_text_color(text->basic_color);
     } break;
     
     case ColorTypeRGB:
     { 
-        change_text_color_rgb(fmt.text.rgb_color.r, fmt.text.rgb_color.g, fmt.text.rgb_color.b);
+        change_text_color_rgb(text->rgb_color.r, text->rgb_color.g, text->rgb_color.b);
     } break;
 
     case ColorTypeNone:
     default:
         break;
     }
+}
 
-    switch (fmt.background.color_type)
+void activate_background_color(struct color_cfg *background)
+{
+    if (!background) { return; }
+
+    switch (background->color_type)
     {
     case ColorTypeBasic:
     {
-        change_background_color(fmt.background.basic_color);
+        change_background_color(background->basic_color);
     } break;
     
     case ColorTypeRGB:
-    {
-        change_background_color_rgb(fmt.text.rgb_color.r, fmt.text.rgb_color.g, fmt.text.rgb_color.b);
+    { 
+        change_background_color_rgb(background->rgb_color.r, background->rgb_color.g, background->rgb_color.b);
     } break;
-    
+
     case ColorTypeNone:
     default:
         break;
     }
+}
+
+void activate_attrs(struct text_attributes *attrs)
+{
+    if (!attrs) { return; }
+
+    if (attrs->is_bold)      { text_bold();      }
+    if (attrs->is_italic)    { text_italic();    }
+    if (attrs->is_underline) { text_underline(); }
+}
+
+void use_text_fmt(struct text_config fmt)
+{
+    activate_attrs         (&fmt.used_attrs);
+
+    activate_text_color      (&fmt.text      );
+    activate_background_color(&fmt.background);
 }
 
 void print_line(char const * const text, unsigned line_coord, struct text_config fmt)
@@ -440,19 +468,23 @@ void print_line(char const * const text, unsigned line_coord, struct text_config
     reset_all_sgr_attr();
 }
 
-int get_choice(struct print_config const * const cfg, char *text[], unsigned lines)
+void prepare_to_paint()
 {
-    if (!cfg)  { return -1; }
-    if (!text) { return -1; }
-    if (lines == 0) { return -1; }
-
     hide_cursor();
     cursor_position(1, 1);
     erase_screen();
+}
 
+int get_choice(struct print_config const * const cfg, char *text[], unsigned lines)
+{
+    if (!cfg      ) { return -1; }
+    if (!text     ) { return -1; }
+    if (lines == 0) { return -1; }
 
+    prepare_to_paint();
 
     unsigned start_point = 1;
+
     cursor_position(start_point + lines + 1, 1);
     errase_full_line();
     printf("↑ - Up / ↓ - Down / Enter or → - Select");
@@ -498,8 +530,8 @@ int get_choice(struct print_config const * const cfg, char *text[], unsigned lin
         }
 
         if (need_reprint) {
-            print_line(text[prev_line], start_point + prev_line, cfg->other_text);
-            print_line(text[cur_line], start_point + cur_line, cfg->selected_text);
+            print_line(text[prev_line], start_point + prev_line, cfg->other_text   );
+            print_line(text[cur_line] , start_point + cur_line , cfg->selected_text);
 
             need_reprint = 0;
         }
