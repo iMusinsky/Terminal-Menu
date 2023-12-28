@@ -1,4 +1,4 @@
-#include "bash_menu.h"
+#include "terminal_menu.h"
 
 #include <stdio.h>
 #include <stdlib.h>

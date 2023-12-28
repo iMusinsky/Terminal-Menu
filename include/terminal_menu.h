@@ -1,5 +1,5 @@
-#ifndef __BASH_MENU_H__
-#define __BASH_MENU_H__
+#ifndef __TERMINAL_MENU_H__
+#define __TERMINAL_MENU_H__
 
 enum BasicColor
 {
@@ -52,4 +52,4 @@ int off_text_italic(print_config * const obj, TextType type);
 int set_text_underline(print_config * const obj, TextType type); 
 int off_text_underline(print_config * const obj, TextType type); 
 
-#endif // !__BASH_MENU_H__
+#endif // !__TERMINAL_MENU_H__

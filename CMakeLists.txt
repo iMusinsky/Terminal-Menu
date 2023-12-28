@@ -5,7 +5,7 @@ set(LIB_NAME castom_menu)
 set(BUILD_EXAMPLE ON)
 
 
-set(INCLUDE_PATH header/)
+set(INCLUDE_PATH include/)
 
 project(${LIB_NAME})
 

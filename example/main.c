@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bash_menu.h"
+#include "terminal_menu.h"
 
 int main()
 {
